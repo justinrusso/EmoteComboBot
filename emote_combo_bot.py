@@ -25,8 +25,8 @@ def parse_arguments():
 
 
 def get_channel_id(channel_name: str, config: dict[str, any]) -> str:
-    headers = {'Authorization': f'Bearer {config.oauth}',
-               'Client-Id': config.client_id}
+    headers = {'Authorization': f'Bearer {config["oauth"]}',
+               'Client-Id': config["client_id"]}
     response = requests.get(
         f'https://api.twitch.tv/helix/users?login={channel_name}', headers=headers)
     data = response.json()
@@ -34,7 +34,7 @@ def get_channel_id(channel_name: str, config: dict[str, any]) -> str:
     if len(data) != 1:
         raise Exception('Failed to find channel')
 
-    return data[0].id
+    return data['data'][0]['id']
 
 
 def main():
