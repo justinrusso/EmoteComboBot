@@ -7,6 +7,7 @@ import sys
 from bot import ComboBot
 from emotes import get_emotes
 from logging import critical, error, info, warning, debug
+from store import Store
 
 
 def parse_arguments():
@@ -52,7 +53,7 @@ def main():
     emotes = get_emotes(config['channel'], channel_id)
 
     bot = ComboBot(config['botName'],
-                   f'oauth:{config["accessToken"]}', config['channel'], channel_id, emotes)
+                   f'oauth:{config["accessToken"]}', config['channel'], channel_id, emotes, Store('record.json'))
     bot.run()
 
 

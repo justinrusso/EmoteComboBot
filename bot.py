@@ -2,14 +2,17 @@ from emotes import get_emotes
 import re
 from twitchio.ext import commands
 
+from store import Store
+
 
 class ComboBot(commands.Bot):
-    def __init__(self, bot_name: str, oauth: str, channel_name: str, channel_id: str, emotes: set[str]):
+    def __init__(self, bot_name: str, oauth: str, channel_name: str, channel_id: str, emotes: set[str], record_store: Store):
         super().__init__(token=oauth, prefix='!',
                          initial_channels=[channel_name])
         self._channel_name = channel_name
         self._channel_id = channel_id
         self._emotes = emotes
+        self._record_store = record_store
 
         self._chain_count = 0
         self._current_emote = None
@@ -37,6 +40,11 @@ class ComboBot(commands.Bot):
             self._emotes = get_emotes(self._channel_name, self._channel_id)
             await ctx.send(f'Refreshed emotes list. {len(self._emotes)} non-Twitch emotes found.')
 
+    @commands.command()
+    async def combo(self, ctx: commands.Context):
+        if 'count' in self._record_store.data and self._record_store.data is not None:
+            await ctx.send(f'The largest combo was {self._record_store.data["count"]}x {self._record_store.data["emote"]}')
+
     async def handle_chain(self, message):
         message_emotes = self.parse_emotes(message)
 
@@ -50,6 +58,11 @@ class ComboBot(commands.Bot):
             if self._chain_count >= 5:
                 await message.channel.send(
                     f'{self._chain_count}x {self._current_emote} combo')
+                # Check/save to store
+                if self._record_store.data['count'] < self._chain_count:
+                    self._record_store.data['count'] = self._chain_count
+                    self._record_store.data['emote'] = self._current_emote
+                    self._record_store.save()
             self._chain_count = 0
             self._current_emote = None
 
