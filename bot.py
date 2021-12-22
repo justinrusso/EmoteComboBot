@@ -52,6 +52,10 @@ class ComboBot(commands.Bot):
             self._chain_count = 0
             self._current_emote = None
 
+            if len(message_emotes) > 0:
+                self._current_emote = list(message_emotes)[0]
+                self._chain_count = 1
+
     def parse_emotes(self, message) -> set[str]:
         message_emotes = set()
         if len(message.tags['emotes']) > 0:
