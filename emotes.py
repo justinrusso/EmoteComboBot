@@ -54,7 +54,11 @@ def get_7tv_emotes(channel_name: str):
     emotes = set()
 
     response = requests.get(
-        f'https://api.7tv.app/v2/users/${channel_name}/emotes')
+        f'https://api.7tv.app/v2/users/{channel_name}/emotes')
+
+    if response.ok is False:
+        return emotes
+
     data = response.json()
     for emote in data:
         emotes.add(emote['name'])
