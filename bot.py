@@ -35,6 +35,7 @@ class ComboBot(commands.Bot):
     async def refresh(self, ctx: commands.Context):
         if ctx.author.is_mod:
             self._emotes = get_emotes(self._channel_name, self._channel_id)
+            await ctx.send(f'Refreshed emotes list. {len(self._emotes)} non-Twitch emotes found.')
 
     async def handle_chain(self, message):
         message_emotes = self.parse_emotes(message)
