@@ -6,11 +6,15 @@ def get_ffz_emotes(channel_name: str):
     """
     Gets the global and channel emotes for FFZ
     """
+    emotes = set()
+
     response = requests.get(
         f'https://api.frankerfacez.com/v1/room/{channel_name}')
-    data = response.json()
 
-    emotes = set()
+    if response.ok is False:
+        return emotes
+
+    data = response.json()
 
     for emote_set in data['sets'].values():
         for emote in emote_set['emoticons']:
@@ -32,6 +36,10 @@ def get_bttv_emotes(channel_id: str):
 
     response = requests.get(
         f'https://api.betterttv.net/3/cached/users/twitch/{channel_id}')
+
+    if response.ok is False:
+        return emotes
+
     data = response.json()
     for emote in data['channelEmotes']:
         emotes.add(emote['code'])
