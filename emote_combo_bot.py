@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 import json
 import logging
 import requests
@@ -50,9 +51,9 @@ def main():
                                 "oauth": config['accessToken'], "client_id": config['clientId']})
     emotes = get_emotes(config['channel'], channel_id)
 
-    client = ComboBot(config['botName'],
-                      f'oauth:{config["accessToken"]}').start()
-    client.handle_forever()
+    bot = ComboBot(config['botName'],
+                   f'oauth:{config["accessToken"]}', config['channel'], channel_id, emotes)
+    bot.run()
 
 
 if __name__ == '__main__':
